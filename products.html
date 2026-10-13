@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全部商品 - 小米商城</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <nav class="topbar-nav">
+        <a href="index.html">小米商城</a>
+        <a href="products.html">MIUI</a>
+        <a href="about.html">关于我们</a>
+      </nav>
+      <div>
+        <a href="products.html">登录</a>
+        <span style="margin:0 10px;">|</span>
+        <a href="products.html">注册</a>
+        <a class="topbar-cart" href="products.html">🛒 购物车 (<span data-cart-count>0</span>)</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container">
+      <a class="logo" href="index.html">
+        <span class="logo-badge">MI</span> 小米
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">首页</a>
+        <a href="products.html">全部商品</a>
+        <a href="products.html?c=手机">小米手机</a>
+        <a href="products.html?c=电视">电视</a>
+        <a href="products.html?c=笔记本">笔记本</a>
+        <a href="products.html?c=智能硬件">智能硬件</a>
+        <a href="about.html">服务</a>
+      </nav>
+      <div class="search-box">
+        <input type="text" placeholder="搜索商品" aria-label="搜索商品">
+        <button aria-label="搜索">🔍</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="crumb">
+      <a href="index.html">首页</a> › <b>全部商品</b>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <span class="label">分类:</span>
+      <div id="filter-btns"></div>
+    </div>
+
+    <!-- 商品网格 -->
+    <div class="product-grid" id="product-list"></div>
+    <p id="empty-tip" style="display:none;text-align:center;color:#757575;padding:40px 0;">
+      没有找到相关商品
+    </p>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>选购指南</h4>
+          <a href="products.html?c=手机">手机</a>
+          <a href="products.html?c=电视">电视</a>
+          <a href="products.html?c=笔记本">笔记本</a>
+          <a href="products.html?c=家电">家电</a>
+        </div>
+        <div class="footer-col">
+          <h4>服务支持</h4>
+          <a href="about.html">售后政策</a>
+          <a href="about.html">维修服务</a>
+        </div>
+        <div class="footer-col">
+          <h4>关于小米</h4>
+          <a href="about.html">公司简介</a>
+          <a href="about.html">联系我们</a>
+        </div>
+        <div class="footer-col">
+          <h4>关注我们</h4>
+          <a href="#">官方微博</a>
+          <a href="#">小米社区</a>
+        </div>
+        <div class="footer-col">
+          <h4>400-100-5678</h4>
+          <a href="#">人工客服</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2025 仿小米官网(作业演示)· 本站仅为学习用途,与小米公司无关
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 读取 URL 参数:分类 c、搜索关键词 q
+      var params = new URLSearchParams(location.search);
+      var currentCat = params.get('c') || '全部';
+      var keyword = (params.get('q') || '').toLowerCase();
+
+      // 渲染筛选按钮
+      var btnWrap = document.getElementById('filter-btns');
+      CATEGORIES.forEach(function (cat) {
+        var b = document.createElement('button');
+        b.className = 'filter-btn' + (cat === currentCat ? ' active' : '');
+        b.textContent = cat;
+        b.addEventListener('click', function () {
+          location.href = 'products.html?c=' + encodeURIComponent(cat);
+        });
+        btnWrap.appendChild(b);
+      });
+
+      // 按条件过滤
+      var list = PRODUCTS.filter(function (p) {
+        var okCat = currentCat === '全部' || p.category === currentCat;
+        var okKw = !keyword ||
+          p.name.toLowerCase().indexOf(keyword) >= 0 ||
+          p.desc.toLowerCase().indexOf(keyword) >= 0 ||
+          p.category.toLowerCase().indexOf(keyword) >= 0;
+        return okCat && okKw;
+      });
+
+      document.getElementById('empty-tip').style.display = list.length ? 'none' : 'block';
+      renderProducts(list, 'product-list');
+
+      // 回填搜索框
+      var kwInput = document.querySelector('.search-box input');
+      if (kwInput && params.get('q')) kwInput.value = params.get('q');
+    });
+  </script>
+</body>
+</html>
